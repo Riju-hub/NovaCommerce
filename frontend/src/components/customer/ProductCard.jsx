@@ -1,3 +1,4 @@
+// src/components/customer/ProductCard.jsx
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { ShoppingCart, Star, Store } from 'lucide-react';

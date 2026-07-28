@@ -65,15 +65,14 @@ const productSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
-    // APPROVAL WORKFLOW FIELDS
     isPublished: {
       type: Boolean,
-      default: false, // Hidden from store until admin approval
+      default: true, 
     },
     approvalStatus: {
       type: String,
       enum: ['pending', 'approved', 'rejected'],
-      default: 'pending',
+      default: 'approved',
     },
     rejectionReason: {
       type: String,

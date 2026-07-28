@@ -30,7 +30,13 @@ export const createProduct = createAsyncThunk(
   'product/createProduct',
   async (productData, { rejectWithValue }) => {
     try {
-      const response = await axiosInstance.post('/products', productData);
+      // FIX: Ensure FormData uses 'multipart/form-data' so Multer parses req.files
+      const isFormData = productData instanceof FormData;
+      const response = await axiosInstance.post('/products', productData, {
+        headers: {
+          ...(isFormData && { 'Content-Type': 'multipart/form-data' }),
+        },
+      });
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || 'Failed to create product.');
@@ -42,7 +48,13 @@ export const updateProduct = createAsyncThunk(
   'product/updateProduct',
   async ({ id, formData }, { rejectWithValue }) => {
     try {
-      const response = await axiosInstance.put(`/products/${id}`, formData);
+      // FIX: Ensure FormData uses 'multipart/form-data' so Multer parses req.files
+      const isFormData = formData instanceof FormData;
+      const response = await axiosInstance.put(`/products/${id}`, formData, {
+        headers: {
+          ...(isFormData && { 'Content-Type': 'multipart/form-data' }),
+        },
+      });
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || 'Failed to update product.');

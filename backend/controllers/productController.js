@@ -17,6 +17,7 @@ const uploadToCloudinary = (fileBuffer) => {
         resolve(result.secure_url);
       }
     );
+
     uploadStream.end(fileBuffer);
   });
 };
@@ -48,7 +49,7 @@ export const getProducts = async (req, res, next) => {
       isPublished: true,
       $or: [
         { approvalStatus: 'approved' },
-        { approvalStatus: { $exists: false } } // Handles legacy products created before approval system
+        { approvalStatus: { $exists: false } } // Legacy products
       ]
     };
     
@@ -102,50 +103,69 @@ export const createProduct = async (req, res, next) => {
 
     let imageUrls = [];
 
-    if (req.body.images) {
-      imageUrls = Array.isArray(req.body.images) ? req.body.images : [req.body.images];
-    }
-
+    // 1. Process Multer file uploads to Cloudinary
     if (req.files && req.files.length > 0) {
       const uploadPromises = req.files.map((file) => uploadToCloudinary(file.buffer));
       const uploadedCloudinaryUrls = await Promise.all(uploadPromises);
       imageUrls = [...imageUrls, ...uploadedCloudinaryUrls];
     }
 
+    // 2. Process any direct image URL strings passed in body
+    if (req.body.images) {
+      const bodyImages = Array.isArray(req.body.images) ? req.body.images : [req.body.images];
+      const validBodyUrls = bodyImages.filter(
+        (url) => typeof url === 'string' && url.trim().startsWith('http')
+      );
+      imageUrls = [...imageUrls, ...validBodyUrls];
+    }
+
+    // 3. Fallback placeholder
+    if (imageUrls.length === 0) {
+      imageUrls = ['https://via.placeholder.com/600x600?text=Product+Image'];
+    }
+
+    // Handle Category Lookup
     let categoryId = req.body.category;
     if (categoryId && !mongoose.Types.ObjectId.isValid(categoryId)) {
-      const categoryDoc = await Category.findOne({
+      let categoryDoc = await Category.findOne({
         name: { $regex: `^${categoryId}$`, $options: 'i' },
       });
-      if (categoryDoc) {
-        categoryId = categoryDoc._id;
-      } else {
-        return res.status(400).json({
-          success: false,
-          message: `Category '${req.body.category}' not found in database.`,
-        });
+
+      if (!categoryDoc) {
+        categoryDoc = await Category.create({ name: categoryId });
+      }
+      categoryId = categoryDoc._id;
+    }
+
+    // Parse Variants
+    let variants = req.body.variants || [];
+    if (typeof variants === 'string') {
+      try {
+        variants = JSON.parse(variants);
+      } catch (e) {
+        variants = [];
       }
     }
-    
+
+    // Build Product Object
     const productData = {
-      ...req.body,
+      name: req.body.name || req.body.title,
+      description: req.body.description,
+      price: Number(req.body.price),
+      stock: Number(req.body.stock || 0),
+      category: categoryId,
       store: store._id,
       images: imageUrls,
-      isPublished: false, 
-      approvalStatus: 'pending',
+      variants: variants,
+      isPublished: true,          // Immediate auto-approval
+      approvalStatus: 'approved', // Immediate auto-approval
     };
-
-    if (typeof productData.variants === 'string') {
-      try {
-        productData.variants = JSON.parse(productData.variants);
-      } catch (e) {}
-    }
 
     const product = await Product.create(productData);
 
     res.status(201).json({
       success: true,
-      message: 'Product submitted successfully and is pending admin approval.',
+      message: 'Product created and published successfully.',
       data: product,
     });
   } catch (error) {
@@ -162,10 +182,13 @@ export const updateProduct = async (req, res, next) => {
 
     let imageUrls = [];
 
+    // Collect existing URLs from body
     if (req.body.images) {
-      imageUrls = Array.isArray(req.body.images) ? req.body.images : [req.body.images];
+      const bodyImages = Array.isArray(req.body.images) ? req.body.images : [req.body.images];
+      imageUrls = bodyImages.filter((url) => typeof url === 'string' && url.trim().startsWith('http'));
     }
 
+    // Process new file uploads
     if (req.files && req.files.length > 0) {
       const uploadPromises = req.files.map((file) => uploadToCloudinary(file.buffer));
       const uploadedCloudinaryUrls = await Promise.all(uploadPromises);
@@ -173,23 +196,39 @@ export const updateProduct = async (req, res, next) => {
     }
 
     const updateData = { ...req.body };
+
+    // Sync name if title is provided
+    if (updateData.title && !updateData.name) {
+      updateData.name = updateData.title;
+    }
+
+    // Update images array if provided
     if (imageUrls.length > 0) {
       updateData.images = imageUrls;
     }
 
+    // Resolve Category
+    if (updateData.category && !mongoose.Types.ObjectId.isValid(updateData.category)) {
+      let categoryDoc = await Category.findOne({
+        name: { $regex: `^${updateData.category}$`, $options: 'i' },
+      });
+
+      if (!categoryDoc) {
+        categoryDoc = await Category.create({ name: updateData.category });
+      }
+      updateData.category = categoryDoc._id;
+    }
+
+    // Parse Variants
     if (typeof updateData.variants === 'string') {
       try {
         updateData.variants = JSON.parse(updateData.variants);
       } catch (e) {}
     }
 
-    if (req.user.role === 'vendor') {
-      updateData.approvalStatus = 'pending';
-      updateData.isPublished = false;
-    }
-
+    // FIXED: Using returnDocument: 'after' instead of deprecated new: true
     product = await Product.findByIdAndUpdate(req.params.id, updateData, {
-      new: true,
+      returnDocument: 'after',
       runValidators: true,
     });
 

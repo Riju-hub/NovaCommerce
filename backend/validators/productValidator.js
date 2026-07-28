@@ -44,16 +44,14 @@ export const createProductValidation = [
     .isInt({ min: 0 })
     .withMessage('Stock must be a non-negative integer'),
 
+  // FIXED: Accepts both direct Mongo IDs and string names like "Electronics"
   body('category')
     .notEmpty()
-    .withMessage('Category ID is required')
-    .isMongoId()
-    .withMessage('Invalid Category ID format'),
+    .withMessage('Category is required'),
 
+  // FIXED: Optional check so Multer/FormData image text values don't fail
   body('images')
-    .optional()
-    .isArray()
-    .withMessage('Images must be provided as an array of URLs'),
+    .optional(),
 
   validate,
 ];
@@ -76,9 +74,7 @@ export const updateProductValidation = [
     .withMessage('Stock must be a non-negative integer'),
 
   body('category')
-    .optional()
-    .isMongoId()
-    .withMessage('Invalid Category ID format'),
+    .optional(),
 
   validate,
 ];

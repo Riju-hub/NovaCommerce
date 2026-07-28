@@ -8,7 +8,7 @@ import ImageUploader from './ImageUploader';
 const ProductForm = ({ initialData = {}, onSubmit, isLoading = false }) => {
   const [formData, setFormData] = useState({
     title: initialData.title || initialData.name || '',
-    category: initialData.category || '',
+    category: initialData.category?._id || initialData.category || '',
     price: initialData.price || '',
     stock: initialData.stock || '',
     description: initialData.description || '',
@@ -25,24 +25,43 @@ const ProductForm = ({ initialData = {}, onSubmit, isLoading = false }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (fileItems.length > 0) {
+    if (fileItems && fileItems.length > 0) {
       const payload = new FormData();
+
+      // Form text values
       payload.append('name', formData.title);
       payload.append('title', formData.title);
       payload.append('category', formData.category);
-      payload.append('price', formData.price);
-      payload.append('stock', formData.stock);
-      payload.append('description', formData.description);
+      payload.append('price', String(formData.price));
+      payload.append('stock', String(formData.stock));
+      payload.append('description', formData.description || '');
 
-      formData.images.forEach((url) => payload.append('images', url));
-      fileItems.forEach((item) => payload.append('imageFiles', item.file));
-      payload.append('variants', JSON.stringify(formData.variants));
+      // Append existing string URLs if any
+      if (Array.isArray(formData.images)) {
+        formData.images.forEach((url) => {
+          if (typeof url === 'string' && url.startsWith('http')) {
+            payload.append('images', url);
+          }
+        });
+      }
+
+      // MUST extract the raw File blob from fileItems
+      fileItems.forEach((item) => {
+        const rawFile = item.file || item; // handle raw file or wrapped item object
+        if (rawFile instanceof File) {
+          payload.append('imageFiles', rawFile);
+        }
+      });
+
+      payload.append('variants', JSON.stringify(formData.variants || []));
 
       onSubmit(payload);
     } else {
+      // Direct JSON submission when no new local files are picked
       onSubmit({
         ...formData,
         name: formData.title,
+        images: formData.images.length > 0 ? formData.images : ['https://via.placeholder.com/600x600?text=Product+Image'],
       });
     }
   };

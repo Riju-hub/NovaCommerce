@@ -1,4 +1,3 @@
-// src/services/productService.js
 import axiosInstance from './axiosInstance';
 
 const productService = {
@@ -13,12 +12,22 @@ const productService = {
   },
 
   createProduct: async (productData) => {
-    const response = await axiosInstance.post('/products', productData);
+    const isFormData = productData instanceof FormData;
+    const response = await axiosInstance.post('/products', productData, {
+      headers: {
+        ...(isFormData && { 'Content-Type': 'multipart/form-data' }),
+      },
+    });
     return response.data;
   },
 
   updateProduct: async (id, productData) => {
-    const response = await axiosInstance.put(`/products/${id}`, productData);
+    const isFormData = productData instanceof FormData;
+    const response = await axiosInstance.put(`/products/${id}`, productData, {
+      headers: {
+        ...(isFormData && { 'Content-Type': 'multipart/form-data' }),
+      },
+    });
     return response.data;
   },
 
