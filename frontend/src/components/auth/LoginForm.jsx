@@ -46,9 +46,25 @@ const LoginForm = ({ onSuccess }) => {
     if (!validate()) return;
 
     const result = await login(formData);
+    
     if (result.type?.endsWith('/fulfilled')) {
-      if (onSuccess) onSuccess();
-      else navigate('/');
+      if (onSuccess) {
+        onSuccess();
+        return;
+      }
+
+      // Read user details from fulfilled action payload or response
+      const user = result.payload?.data || result.payload?.user || result.payload;
+      const userRole = user?.role?.toLowerCase();
+
+      // Route based on role
+      if (userRole === 'vendor') {
+        navigate('/vendor/dashboard');
+      } else if (userRole === 'admin') {
+        navigate('/admin/dashboard');
+      } else {
+        navigate('/');
+      }
     }
   };
 

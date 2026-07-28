@@ -1,4 +1,3 @@
-// src/components/common/Navbar.jsx
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { ShoppingCart, User, Search, Store, Shield, LogOut, Menu, X } from 'lucide-react';
@@ -13,6 +12,9 @@ const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const cartCount = cartItems.reduce((total, item) => total + item.quantity, 0);
+
+  // Safely normalize user role to lowercase
+  const userRole = user?.role?.toLowerCase();
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -51,18 +53,22 @@ const Navbar = () => {
               Browse
             </Link>
 
-            {user?.role === 'vendor' && (
+            {/* Vendor Dashboard Link */}
+            {isAuthenticated && userRole === 'vendor' && (
               <Link to="/vendor/dashboard" className="flex items-center gap-1.5 text-sm font-medium text-slate-600 hover:text-blue-600">
                 <Store className="w-4 h-4" /> Vendor Dashboard
               </Link>
             )}
 
-            <Link 
-              to="/admin/dashboard" 
-              className="flex items-center gap-1.5 text-sm font-medium text-slate-600 hover:text-blue-600 bg-amber-50 px-2.5 py-1 rounded-md border border-amber-200"
-            >
-              <Shield className="w-4 h-4 text-amber-600" /> Admin
-            </Link>
+            {/* Admin Link - Only show to Admins */}
+            {isAuthenticated && userRole === 'admin' && (
+              <Link 
+                to="/admin/dashboard" 
+                className="flex items-center gap-1.5 text-sm font-medium text-slate-600 hover:text-blue-600 bg-amber-50 px-2.5 py-1 rounded-md border border-amber-200"
+              >
+                <Shield className="w-4 h-4 text-amber-600" /> Admin
+              </Link>
+            )}
 
             <Link to="/cart" className="relative p-2 text-slate-600 hover:text-blue-600">
               <ShoppingCart className="w-6 h-6" />
@@ -118,22 +124,33 @@ const Navbar = () => {
               className="w-full bg-slate-100 text-sm rounded-lg py-2 px-3 text-slate-800"
             />
           </form>
-          <Link to="/products" className="block text-sm font-medium text-slate-700 py-2">Catalog</Link>
-          <Link to="/admin/dashboard" onClick={() => setMobileMenuOpen(false)} className="block text-sm font-semibold text-amber-700 py-2">
-            Admin Panel
-          </Link>
-          <Link to="/cart" className="block text-sm font-medium text-slate-700 py-2">Cart ({cartCount})</Link>
+          <Link to="/products" onClick={() => setMobileMenuOpen(false)} className="block text-sm font-medium text-slate-700 py-2">Catalog</Link>
+          
+          {isAuthenticated && userRole === 'vendor' && (
+            <Link to="/vendor/dashboard" onClick={() => setMobileMenuOpen(false)} className="block text-sm font-semibold text-blue-600 py-2">
+              Vendor Dashboard
+            </Link>
+          )}
+
+          {isAuthenticated && userRole === 'admin' && (
+            <Link to="/admin/dashboard" onClick={() => setMobileMenuOpen(false)} className="block text-sm font-semibold text-amber-700 py-2">
+              Admin Panel
+            </Link>
+          )}
+
+          <Link to="/cart" onClick={() => setMobileMenuOpen(false)} className="block text-sm font-medium text-slate-700 py-2">Cart ({cartCount})</Link>
+          
           {isAuthenticated ? (
             <>
-              <Link to="/profile" className="block text-sm font-medium text-slate-700 py-2">Profile</Link>
-              <button onClick={logoutUser} className="block w-full text-left text-sm font-medium text-red-600 py-2">
+              <Link to="/profile" onClick={() => setMobileMenuOpen(false)} className="block text-sm font-medium text-slate-700 py-2">Profile</Link>
+              <button onClick={() => { logoutUser(); setMobileMenuOpen(false); }} className="block w-full text-left text-sm font-medium text-red-600 py-2">
                 Sign Out
               </button>
             </>
           ) : (
             <div className="pt-2 flex flex-col gap-2">
-              <Link to="/login" className="text-center text-sm font-medium border py-2 rounded-lg">Sign In</Link>
-              <Link to="/register" className="text-center text-sm font-medium bg-blue-600 text-white py-2 rounded-lg">Register</Link>
+              <Link to="/login" onClick={() => setMobileMenuOpen(false)} className="text-center text-sm font-medium border py-2 rounded-lg">Sign In</Link>
+              <Link to="/register" onClick={() => setMobileMenuOpen(false)} className="text-center text-sm font-medium bg-blue-600 text-white py-2 rounded-lg">Register</Link>
             </div>
           )}
         </div>
