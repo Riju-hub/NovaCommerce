@@ -23,8 +23,8 @@ export const createCheckoutSession = async (req, res, next) => {
         quantity: item.quantity,
       })),
       mode: 'payment',
-      success_url: `${process.env.CLIENT_URL || 'http://localhost:3000'}/order-confirmation?orderId=${order._id}`,
-      cancel_url: `${process.env.CLIENT_URL || 'http://localhost:3000'}/checkout`,
+      success_url: `${process.env.CLIENT_URL || 'http://localhost:5173'}/order-confirmation?orderId=${order._id}`,
+      cancel_url: `${process.env.CLIENT_URL || 'http://localhost:5173'}/checkout`,
       metadata: { orderId: order._id.toString() },
     });
 

@@ -1,9 +1,13 @@
+
 import mongoose from 'mongoose';
 import Category from '../models/Category.js';
 import Product from '../models/Product.js';
 import Store from '../models/Store.js';
+import User from '../models/User.js';
 import APIFeatures from '../utils/apiFeatures.js';
 import cloudinary from '../config/cloudinary.js';
+import sendEmail from '../utils/sendEmail.js';
+import { getProductCreatedTemplate } from '../utils/emailTemplates.js';
 
 const uploadToCloudinary = (fileBuffer) => {
   return new Promise((resolve, reject) => {
@@ -82,7 +86,11 @@ export const getProductById = async (req, res, next) => {
   try {
     const product = await Product.findById(req.params.id)
       .populate('store', 'name slug logo rating')
-      .populate('category', 'name');
+      .populate('category', 'name')
+      .populate({
+        path: 'reviews',
+        populate: { path: 'user', select: 'name email' },
+      });
 
     if (!product) {
       return res.status(404).json({ success: false, message: 'Product not found' });
@@ -162,6 +170,24 @@ export const createProduct = async (req, res, next) => {
     };
 
     const product = await Product.create(productData);
+
+    // 📧 4. Send Confirmation Email to Vendor
+    try {
+      const vendorUser = await User.findById(req.user.id);
+      const recipientEmail = vendorUser?.email || req.user.email;
+
+      if (recipientEmail) {
+        await sendEmail({
+          email: recipientEmail,
+          subject: `Product Listed: ${product.name}`,
+          message: `Your product "${product.name}" has been successfully added to Nova Ecommerce.`,
+          html: getProductCreatedTemplate(vendorUser?.name || 'Vendor', product),
+        });
+        console.log(`📧 Product creation email sent to ${recipientEmail}`);
+      }
+    } catch (emailErr) {
+      console.error(`❌ Failed to send product creation email: ${emailErr.message}`);
+    }
 
     res.status(201).json({
       success: true,

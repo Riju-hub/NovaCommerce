@@ -8,7 +8,7 @@ const router = express.Router();
 router.use(protect); // All order endpoints require auth
 
 router.post('/', createOrderValidation, createOrder);
-router.get('/myorders', getMyOrders);
+router.get('/my-orders', getMyOrders);
 router.get('/:id', getOrderById);
 
 export default router;

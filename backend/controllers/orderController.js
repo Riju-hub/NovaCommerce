@@ -1,4 +1,7 @@
 import Order from '../models/Order.js';
+import User from '../models/User.js';
+import sendEmail from '../utils/sendEmail.js';
+import { getOrderConfirmationTemplate } from '../utils/emailTemplates.js';
 
 export const createOrder = async (req, res, next) => {
   try {
@@ -18,6 +21,29 @@ export const createOrder = async (req, res, next) => {
       shippingPrice,
       totalPrice,
     });
+
+    // 📧 Send confirmation email for Cash on Delivery (COD) orders
+    const normalizedMethod = paymentMethod?.toUpperCase();
+    if (normalizedMethod === 'COD' || normalizedMethod === 'CASH ON DELIVERY') {
+      try {
+        // Retrieve logged-in user's email
+        const user = await User.findById(req.user.id);
+        const recipientEmail = user?.email || req.user.email;
+
+        if (recipientEmail) {
+          const htmlContent = getOrderConfirmationTemplate(order);
+          await sendEmail({
+            email: recipientEmail,
+            subject: `Order Confirmation #${order._id.toString().slice(-8).toUpperCase()} (COD)`,
+            message: `Thank you for your order! Total amount: $${order.totalPrice.toFixed(2)} (Cash on Delivery)`,
+            html: htmlContent,
+          });
+          console.log(`📧 COD Order confirmation email sent to ${recipientEmail}`);
+        }
+      } catch (emailErr) {
+        console.error(`❌ Failed to send COD order confirmation email: ${emailErr.message}`);
+      }
+    }
 
     res.status(201).json({ success: true, data: order });
   } catch (error) {

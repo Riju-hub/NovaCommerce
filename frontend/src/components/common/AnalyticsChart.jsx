@@ -1,40 +1,69 @@
-// src/components/common/AnalyticsChart.jsx
-import React from 'react';
 
-const AnalyticsChart = ({ title, data = [], type = 'bar', color = 'blue' }) => {
+import React from 'react';
+import { motion } from 'framer-motion';
+import { TrendingUp, BarChart3 } from 'lucide-react';
+
+const AnalyticsChart = ({ title, data = [], type = 'bar', color = 'indigo' }) => {
   const maxValue = Math.max(...data.map((d) => d.value), 1);
 
   const colorStyles = {
-    blue: 'bg-blue-600 hover:bg-blue-700',
-    emerald: 'bg-emerald-600 hover:bg-emerald-700',
-    indigo: 'bg-indigo-600 hover:bg-indigo-700',
+    blue: 'bg-gradient-to-t from-blue-600 to-cyan-400 shadow-blue-500/20 hover:shadow-blue-500/40',
+    emerald: 'bg-gradient-to-t from-emerald-600 to-teal-400 shadow-emerald-500/20 hover:shadow-emerald-500/40',
+    indigo: 'bg-gradient-to-t from-indigo-600 to-violet-500 shadow-indigo-500/20 hover:shadow-indigo-500/40',
   };
 
   return (
-    <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-xs">
-      {title && <h3 className="text-base font-semibold text-slate-900 mb-6">{title}</h3>}
+    <motion.div 
+      initial={{ opacity: 0, y: 15 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4 }}
+      className="bg-white/80 backdrop-blur-xl p-6 rounded-2xl border border-slate-100 shadow-xl shadow-slate-200/50"
+    >
+      {title && (
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center gap-2.5">
+            <div className="p-2 bg-indigo-50 rounded-xl text-indigo-600">
+              <BarChart3 className="w-5 h-5" />
+            </div>
+            <h3 className="text-base font-bold text-slate-800 tracking-tight">{title}</h3>
+          </div>
+          <span className="flex items-center gap-1 text-xs font-semibold text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-full">
+            <TrendingUp className="w-3.5 h-3.5" /> Live Data
+          </span>
+        </div>
+      )}
 
       {/* Bar Chart Visualization */}
-      <div className="flex items-end gap-3 h-48 pt-6 border-b border-slate-200">
+      <div className="flex items-end gap-2.5 sm:gap-4 h-52 pt-8 border-b border-slate-100">
         {data.map((item, index) => {
           const heightPercent = Math.round((item.value / maxValue) * 100);
           return (
-            <div key={index} className="flex-1 flex flex-col items-center h-full justify-end group">
-              <div className="text-[10px] font-medium text-slate-500 opacity-0 group-hover:opacity-100 transition-opacity mb-1">
+            <div key={index} className="flex-1 flex flex-col items-center h-full justify-end group relative">
+              {/* Value Badge */}
+              <motion.div 
+                initial={{ opacity: 0, y: 5 }}
+                whileHover={{ opacity: 1, y: -2 }}
+                className="absolute -top-3 text-[11px] font-bold text-slate-700 bg-slate-900 text-white px-2 py-0.5 rounded-md shadow-md opacity-0 group-hover:opacity-100 transition-all pointer-events-none z-10"
+              >
                 ${item.value}
-              </div>
-              <div
-                style={{ height: `${heightPercent}%` }}
-                className={`w-full rounded-t-md transition-all duration-300 ${colorStyles[color] || colorStyles.blue}`}
+              </motion.div>
+
+              {/* Animated Bar */}
+              <motion.div
+                initial={{ height: 0 }}
+                animate={{ height: `${heightPercent}%` }}
+                transition={{ duration: 0.6, delay: index * 0.05, ease: 'easeOut' }}
+                className={`w-full rounded-t-lg transition-all shadow-lg ${colorStyles[color] || colorStyles.indigo}`}
               />
-              <span className="text-xs text-slate-500 mt-2 truncate w-full text-center">
+
+              <span className="text-[11px] sm:text-xs font-medium text-slate-500 mt-3 truncate w-full text-center">
                 {item.label}
               </span>
             </div>
           );
         })}
       </div>
-    </div>
+    </motion.div>
   );
 };
 

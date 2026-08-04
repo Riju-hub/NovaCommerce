@@ -1,4 +1,3 @@
-// src/App.jsx
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 
@@ -19,6 +18,7 @@ import StoreFrontPage from './pages/customer/StoreFrontPage';
 import CartPage from './pages/customer/CartPage';
 import CheckoutPage from './pages/customer/CheckoutPage';
 import OrderConfirmationPage from './pages/customer/OrderConfirmationPage';
+import OrderHistoryPage from './pages/customer/OrderHistoryPage'; // 👈 Import added
 
 // Vendor Pages
 import VendorDashboard from './pages/vendor/VendorDashboard';
@@ -59,6 +59,7 @@ const App = () => {
             {/* Protected Customer Routes */}
             <Route element={<PrivateRoute allowedRoles={['customer', 'vendor', 'admin']} />}>
               <Route path="/profile" element={<ProfilePage />} />
+              <Route path="/orders" element={<OrderHistoryPage />} /> {/* 👈 Route registered */}
               <Route path="/checkout" element={<CheckoutPage />} />
               <Route path="/order-confirmation" element={<OrderConfirmationPage />} />
             </Route>

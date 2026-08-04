@@ -1,5 +1,7 @@
 import stripe from '../config/stripe.js';
 import Order from '../models/Order.js';
+import sendEmail from './sendEmail.js';
+import { getOrderConfirmationTemplate } from './emailTemplates.js';
 
 export const handleStripeWebhook = async (req, res) => {
   const sig = req.headers['stripe-signature'];
@@ -21,17 +23,37 @@ export const handleStripeWebhook = async (req, res) => {
     const orderId = session.metadata?.orderId;
 
     if (orderId) {
-      const order = await Order.findById(orderId);
+      // Fetch order and populate user info for email fallback
+      const order = await Order.findById(orderId).populate('user', 'email name');
+
       if (order) {
+        const recipientEmail = session.customer_details?.email || order.user?.email;
+
         order.isPaid = true;
         order.paidAt = Date.now();
         order.paymentResult = {
           id: session.payment_intent,
           status: session.payment_status,
-          emailAddress: session.customer_details?.email,
+          emailAddress: recipientEmail,
         };
         await order.save();
         console.log(`✅ Order ${orderId} marked as paid via Stripe Webhook.`);
+
+        // 📧 Send Email Confirmation using your existing template
+        if (recipientEmail) {
+          try {
+            const htmlContent = getOrderConfirmationTemplate(order);
+            await sendEmail({
+              email: recipientEmail,
+              subject: `Order Confirmation #${order._id.toString().slice(-8).toUpperCase()}`,
+              message: `Thank you for your purchase! Total amount: $${order.totalPrice.toFixed(2)}`,
+              html: htmlContent,
+            });
+            console.log(`📧 Receipt sent to ${recipientEmail}`);
+          } catch (emailErr) {
+            console.error(`❌ Failed to send order receipt email: ${emailErr.message}`);
+          }
+        }
       }
     }
   }

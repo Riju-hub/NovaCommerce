@@ -10,7 +10,20 @@ const cartSlice = createSlice({
   reducers: {
     addToCart: (state, action) => {
       const { product, quantity = 1, selectedVariant = null } = action.payload;
-      const cartKey = `${product._id}-${selectedVariant?.id || 'default'}`;
+
+      // 1. Resolve store ID regardless of backend population structure
+      const storeId =
+        typeof product.store === 'object'
+          ? product.store?._id
+          : product.store || product.storeId || product.vendor || product.vendorId;
+
+      // 2. Resolve image URL fallback
+      const imageUrl =
+        product.image ||
+        (Array.isArray(product.images) ? product.images[0] : '') ||
+        'https://via.placeholder.com/150';
+
+      const cartKey = `${product._id}-${selectedVariant?.id || selectedVariant?._id || 'default'}`;
       const existingIndex = state.cartItems.findIndex((item) => item.cartKey === cartKey);
 
       if (existingIndex > -1) {
@@ -18,11 +31,15 @@ const cartSlice = createSlice({
       } else {
         state.cartItems.push({
           ...product,
+          _id: product._id, // Ensure product _id is explicitly mapped
+          store: storeId,   // Ensure raw string Store ObjectId
+          image: imageUrl,
           quantity,
           selectedVariant,
           cartKey,
         });
       }
+
       localStorage.setItem('cart', JSON.stringify(state.cartItems));
     },
     removeFromCart: (state, action) => {

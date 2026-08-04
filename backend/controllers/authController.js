@@ -1,5 +1,7 @@
 import User from '../models/User.js';
 import { sendTokenResponse } from '../utils/generateToken.js';
+import sendEmail from '../utils/sendEmail.js';
+import { getWelcomeTemplate, getLoginAlertTemplate } from '../utils/emailTemplates.js';
 
 export const register = async (req, res, next) => {
   try {
@@ -16,6 +18,19 @@ export const register = async (req, res, next) => {
       password,
       role: role || 'customer',
     });
+
+    // 📧 Send Welcome Email on Account Creation
+    try {
+      await sendEmail({
+        email: user.email,
+        subject: 'Welcome to Nova Ecommerce! 🎉',
+        message: `Welcome ${user.name}! We are excited to have you join us.`,
+        html: getWelcomeTemplate(user.name),
+      });
+      console.log(`📧 Welcome email sent to ${user.email}`);
+    } catch (emailErr) {
+      console.error('❌ Failed to send welcome email:', emailErr.message);
+    }
 
     sendTokenResponse(user, 201, res);
   } catch (error) {
@@ -35,6 +50,20 @@ export const login = async (req, res, next) => {
     const isMatch = await user.matchPassword(password);
     if (!isMatch) {
       return res.status(401).json({ success: false, message: 'Invalid credentials' });
+    }
+
+    // 📧 Send Login Notification Email
+    try {
+      const loginTime = new Date().toLocaleString();
+      await sendEmail({
+        email: user.email,
+        subject: 'Security Alert: New Login Detected',
+        message: `Hello ${user.name}, a new login was detected on ${loginTime}.`,
+        html: getLoginAlertTemplate(user.name, loginTime),
+      });
+      console.log(`📧 Login notification sent to ${user.email}`);
+    } catch (emailErr) {
+      console.error('❌ Failed to send login notification:', emailErr.message);
     }
 
     sendTokenResponse(user, 200, res);

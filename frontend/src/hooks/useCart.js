@@ -1,4 +1,3 @@
-// src/hooks/useCart.js
 import { useSelector, useDispatch } from 'react-redux';
 import {
   addToCart,
