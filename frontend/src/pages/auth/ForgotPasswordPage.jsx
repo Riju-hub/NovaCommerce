@@ -1,14 +1,13 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Sparkles, Cpu, Store, Lock } from 'lucide-react';
-import LoginForm from '../../components/auth/LoginForm';
+import { Sparkles, Cpu } from 'lucide-react';
+import ForgotPassword from '../../components/auth/ForgotPassword';
 
-const LoginPage = () => {
+const ForgotPasswordPage = () => {
   return (
     <div className="min-h-[calc(100vh-5rem)] bg-slate-950 text-slate-100 flex items-center justify-center p-4 sm:p-6 font-sans relative overflow-hidden">
-      {/* Glow Effects Background */}
+      {/* Background Glows */}
       <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-indigo-600/15 blur-[120px] rounded-full pointer-events-none" />
       <div className="absolute bottom-10 right-10 w-72 h-72 bg-violet-600/10 blur-[100px] rounded-full pointer-events-none" />
 
@@ -17,7 +16,7 @@ const LoginPage = () => {
         animate={{ opacity: 1, y: 0 }}
         className="bg-slate-900/80 backdrop-blur-2xl rounded-3xl border border-slate-800 shadow-2xl p-6 sm:p-8 w-full max-w-md space-y-6 relative z-10"
       >
-        {/* Header Section */}
+        {/* Branding Header */}
         <div className="text-center space-y-3">
           <Link to="/" className="inline-flex items-center gap-3 group">
             <div className="relative">
@@ -36,32 +35,13 @@ const LoginPage = () => {
               </span>
             </div>
           </Link>
-
-          <div className="pt-2">
-            <h1 className="text-xl font-black text-white tracking-tight flex items-center justify-center gap-2">
-              Welcome Back <Lock className="w-4 h-4 text-indigo-400" />
-            </h1>
-            <p className="text-xs text-slate-400 mt-1 leading-relaxed">
-              Sign in to access your order history, saved cart, or seller command hub.
-            </p>
-          </div>
         </div>
 
-        {/* Login Form Component */}
-        <LoginForm />
-
-        {/* Footer Links */}
-        <div className="text-center pt-4 border-t border-slate-800/80">
-          <p className="text-xs font-semibold text-slate-400">
-            Are you a seller?{' '}
-            <Link to="/register?role=vendor" className="font-bold text-indigo-400 hover:text-indigo-300 inline-flex items-center gap-1 transition-colors">
-              <Store className="w-3.5 h-3.5" /> Register as a Vendor
-            </Link>
-          </p>
-        </div>
+        {/* Forgot Password Component */}
+        <ForgotPassword />
       </motion.div>
     </div>
   );
 };
 
-export default LoginPage;
+export default ForgotPasswordPage;

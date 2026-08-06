@@ -127,23 +127,23 @@ export const getOrderConfirmationTemplate = (order) => {
   return getBaseLayout(content);
 };
 
-export const getPasswordResetTemplate = (resetUrl) => {
-  const content = `
-    <div style="margin-bottom: 20px;">
-      <h2 style="margin: 0 0 8px 0; color: #111827; font-size: 20px; font-weight: 700;">Password Reset Request</h2>
-      <p style="margin: 0; color: #4b5563;">You recently requested to reset your password for your account.</p>
-    </div>
+// export const getPasswordResetTemplate = (resetUrl) => {
+//   const content = `
+//     <div style="margin-bottom: 20px;">
+//       <h2 style="margin: 0 0 8px 0; color: #111827; font-size: 20px; font-weight: 700;">Password Reset Request</h2>
+//       <p style="margin: 0; color: #4b5563;">You recently requested to reset your password for your account.</p>
+//     </div>
 
-    <p style="margin: 0 0 24px 0; color: #4b5563;">Click the button below to choose a new password:</p>
+//     <p style="margin: 0 0 24px 0; color: #4b5563;">Click the button below to choose a new password:</p>
 
-    <div style="text-align: center; margin: 28px 0;">
-      <a href="${resetUrl}" style="display: inline-block; padding: 14px 28px; background-color: #ef4444; color: #ffffff; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 15px; box-shadow: 0 2px 4px rgba(239, 68, 68, 0.2);">Reset Password</a>
-    </div>
+//     <div style="text-align: center; margin: 28px 0;">
+//       <a href="${resetUrl}" style="display: inline-block; padding: 14px 28px; background-color: #ef4444; color: #ffffff; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 15px; box-shadow: 0 2px 4px rgba(239, 68, 68, 0.2);">Reset Password</a>
+//     </div>
 
-    <p style="margin: 0; color: #6b7280; font-size: 13px;">If you didn't request a password reset, you can safely ignore this email.</p>
-  `;
-  return getBaseLayout(content);
-};
+//     <p style="margin: 0; color: #6b7280; font-size: 13px;">If you didn't request a password reset, you can safely ignore this email.</p>
+//   `;
+//   return getBaseLayout(content);
+// };
 
 export const getProductCreatedTemplate = (vendorName, product) => {
   const content = `
@@ -169,6 +169,116 @@ export const getProductCreatedTemplate = (vendorName, product) => {
 
     <div style="text-align: center;">
       <a href="${process.env.CLIENT_URL || '#'}/vendor/products" style="display: inline-block; padding: 12px 24px; background-color: #4f46e5; color: #ffffff; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 14px;">Manage Products</a>
+    </div>
+  `;
+  return getBaseLayout(content);
+};
+
+
+// const getBaseLayout = (content) => `
+//   <!DOCTYPE html>
+//   <html>
+//   <head>
+//     <meta charset="utf-8">
+//     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+//     <title>Nova Ecommerce</title>
+//   </head>
+//   <body style="margin: 0; padding: 0; background-color: #f4f6f8; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+//     <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background-color: #f4f6f8; padding: 40px 10px;">
+//       <tr>
+//         <td align="center">
+//           <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width: 600px; background-color: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); border: 1px solid #e5e7eb;">
+            
+//             <!-- Header -->
+//             <tr>
+//               <td style="background-color: #4f46e5; padding: 28px 32px; text-align: center;">
+//                 <h1 style="color: #ffffff; margin: 0; font-size: 22px; font-weight: 700;">Nova Ecommerce</h1>
+//               </td>
+//             </tr>
+
+//             <!-- Body Content -->
+//             <tr>
+//               <td style="padding: 36px 32px; color: #1f2937; line-height: 1.6; font-size: 15px;">
+//                 ${content}
+//               </td>
+//             </tr>
+
+//             <!-- Footer -->
+//             <tr>
+//               <td style="background-color: #f9fafb; padding: 20px 32px; text-align: center; border-top: 1px solid #f3f4f6; color: #6b7280; font-size: 13px;">
+//                 <p style="margin: 0 0 6px 0;">Need help? Contact our support team.</p>
+//                 <p style="margin: 0;">&copy; ${new Date().getFullYear()} Nova Ecommerce. All rights reserved.</p>
+//               </td>
+//             </tr>
+
+//           </table>
+//         </td>
+//       </tr>
+//     </table>
+//   </body>
+//   </html>
+// `;
+
+// export const getWelcomeTemplate = (name) => {
+//   const content = `
+//     <div style="text-align: center; margin-bottom: 24px;">
+//       <h2 style="margin: 0; color: #111827; font-size: 22px; font-weight: 700;">Welcome, ${name}! 🎉</h2>
+//     </div>
+//     <p style="margin: 0 0 16px 0; color: #4b5563;">We’re thrilled to have you on board! Explore thousands of products directly from independent vendors worldwide.</p>
+//     <div style="text-align: center; margin-top: 32px;">
+//       <a href="${process.env.CLIENT_URL || '#'}" style="display: inline-block; padding: 14px 28px; background-color: #4f46e5; color: #ffffff; text-decoration: none; border-radius: 8px; font-weight: 600;">Start Shopping</a>
+//     </div>
+//   `;
+//   return getBaseLayout(content);
+// };
+
+export const getOtpTemplate = (otp) => {
+  const content = `
+    <div style="text-align: center; margin-bottom: 20px;">
+      <h2 style="margin: 0 0 8px 0; color: #111827; font-size: 20px; font-weight: 700;">Verify Your Email</h2>
+      <p style="margin: 0; color: #4b5563;">Please use the following 6-digit verification code to complete your registration:</p>
+    </div>
+
+    <div style="text-align: center; margin: 28px 0;">
+      <span style="font-size: 36px; font-weight: 800; letter-spacing: 6px; color: #4f46e5; background-color: #e0e7ff; padding: 12px 28px; border-radius: 12px; display: inline-block;">
+        ${otp}
+      </span>
+    </div>
+
+    <p style="margin: 0; color: #6b7280; font-size: 13px; text-align: center;">This code is valid for 10 minutes. If you did not request this, please ignore this email.</p>
+  `;
+  return getBaseLayout(content);
+};
+
+export const getPasswordResetTemplate = (resetUrl) => {
+  const content = `
+    <div style="margin-bottom: 20px;">
+      <h2 style="margin: 0 0 8px 0; color: #111827; font-size: 20px; font-weight: 700;">Password Reset Request</h2>
+      <p style="margin: 0; color: #4b5563;">You recently requested to reset your password for your account.</p>
+    </div>
+
+    <p style="margin: 0 0 24px 0; color: #4b5563;">Click the button below to choose a new password:</p>
+
+    <div style="text-align: center; margin: 28px 0;">
+      <a href="${resetUrl}" style="display: inline-block; padding: 14px 28px; background-color: #ef4444; color: #ffffff; text-decoration: none; border-radius: 8px; font-weight: 600; box-shadow: 0 2px 4px rgba(239, 68, 68, 0.2);">Reset Password</a>
+    </div>
+
+    <p style="margin: 0; color: #6b7280; font-size: 13px;">If you didn't request a password reset, you can safely ignore this email.</p>
+  `;
+  return getBaseLayout(content);
+};
+
+export const getPasswordChangedTemplate = (name) => {
+  const content = `
+    <div style="margin-bottom: 20px;">
+      <h2 style="margin: 0 0 8px 0; color: #111827; font-size: 20px; font-weight: 700;">Password Changed Successfully</h2>
+      <p style="margin: 0; color: #4b5563;">Hello <strong>${name}</strong>,</p>
+    </div>
+
+    <p style="margin: 0 0 16px 0; color: #4b5563;">Your password has been changed successfully.</p>
+
+    <div style="background-color: #fef2f2; padding: 16px; border-radius: 8px; border-left: 4px solid #ef4444; color: #991b1b; font-size: 13px; margin-bottom: 20px;">
+      If you did not make this change, please contact our support team immediately to secure your account.
     </div>
   `;
   return getBaseLayout(content);

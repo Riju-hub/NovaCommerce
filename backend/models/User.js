@@ -1,6 +1,8 @@
+
 import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import crypto from 'crypto';
 
 const userSchema = new mongoose.Schema(
   {
@@ -25,7 +27,7 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: [true, 'Please enter a password'],
       minlength: [6, 'Password must be at least 6 characters'],
-      select: false, // Prevents hashing leakage in standard DB queries
+      select: false,
     },
     role: {
       type: String,
@@ -56,6 +58,8 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    otpCode: String,
+    otpExpire: Date,
     resetPasswordToken: String,
     resetPasswordExpire: Date,
   },
@@ -64,6 +68,7 @@ const userSchema = new mongoose.Schema(
   }
 );
 
+// Hash password before saving
 userSchema.pre('save', async function () {
   if (!this.isModified('password')) {
     return;
@@ -72,16 +77,43 @@ userSchema.pre('save', async function () {
   this.password = await bcrypt.hash(this.password, salt);
 });
 
+// Compare password
 userSchema.methods.matchPassword = async function (enteredPassword) {
   return await bcrypt.compare(enteredPassword, this.password);
 };
 
+// Generate JWT Token
 userSchema.methods.getSignedJwtToken = function () {
   return jwt.sign(
     { id: this._id, role: this.role },
     process.env.JWT_SECRET || 'fallbacksecret',
     { expiresIn: process.env.JWT_EXPIRE || '30d' }
   );
+};
+
+// Generate 6-digit OTP for email verification
+userSchema.methods.generateOTP = function () {
+  const otp = Math.floor(100000 + Math.random() * 900000).toString();
+  
+  // Hash OTP for DB storage
+  this.otpCode = crypto.createHash('sha256').update(otp).digest('hex');
+  this.otpExpire = Date.now() + 10 * 60 * 1000; // 10 minutes expiry
+
+  return otp; // Plaintext OTP to send via email
+};
+
+// Generate and hash password reset token
+userSchema.methods.getResetPasswordToken = function () {
+  const resetToken = crypto.randomBytes(32).toString('hex');
+
+  this.resetPasswordToken = crypto
+    .createHash('sha256')
+    .update(resetToken)
+    .digest('hex');
+
+  this.resetPasswordExpire = Date.now() + 10 * 60 * 1000; // 10 minutes expiry
+
+  return resetToken;
 };
 
 const User = mongoose.model('User', userSchema);

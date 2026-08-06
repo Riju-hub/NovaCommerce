@@ -1,3 +1,4 @@
+
 import Review from '../models/Review.js';
 import Product from '../models/Product.js';
 
@@ -76,5 +77,44 @@ export const getProductReviews = async (req, res) => {
     res.status(500).json({
       message: error.message || 'Failed to fetch reviews',
     });
+  }
+};
+
+// @desc    Delete product review
+// @route   DELETE /api/v1/products/:productId/reviews/:reviewId
+// @access  Private
+export const deleteReview = async (req, res) => {
+  try {
+    const { productId, reviewId } = req.params;
+
+    const review = await Review.findById(reviewId);
+
+    if (!review) {
+      return res.status(404).json({ message: 'Review not found' });
+    }
+
+    // Authorization check: Compare review author ID with logged-in user ID
+    if (review.user.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ message: 'Not authorized to delete this review' });
+    }
+
+    await review.deleteOne();
+
+    // Recalculate average rating for the product
+    const product = await Product.findById(productId);
+    if (product) {
+      const remainingReviews = await Review.find({ product: productId });
+      
+      product.numReviews = remainingReviews.length;
+      product.ratings = remainingReviews.length > 0
+        ? remainingReviews.reduce((acc, item) => item.rating + acc, 0) / remainingReviews.length
+        : 0;
+
+      await product.save();
+    }
+
+    res.status(200).json({ success: true, message: 'Review deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ message: error.message || 'Server error while deleting review' });
   }
 };

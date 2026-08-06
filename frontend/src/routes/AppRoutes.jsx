@@ -7,6 +7,8 @@ import PrivateRoute from './PrivateRoute';
 import LoginPage from '../pages/auth/LoginPage';
 import RegisterPage from '../pages/auth/RegisterPage';
 import ProfilePage from '../pages/auth/ProfilePage';
+import ForgotPasswordPage from '../pages/auth/ForgotPasswordPage';
+import ResetPasswordPage from '../pages/auth/ResetPasswordPage';
 
 import HomePage from '../pages/customer/HomePage';
 import ProductListingPage from '../pages/customer/ProductListingPage';
@@ -39,6 +41,9 @@ const AppRoutes = () => {
 
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />
+      {/* Password Recovery Routes */}
+      <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+      <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
 
       <Route element={<PrivateRoute allowedRoles={['customer', 'vendor', 'admin']} />}>
         <Route path="/profile" element={<ProfilePage />} />

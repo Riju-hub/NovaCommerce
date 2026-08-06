@@ -1,9 +1,9 @@
-// src/services/authService.js
+
 import axiosInstance from './axiosInstance';
 
 const authService = {
-  login: async (credentials) => {
-    const response = await axiosInstance.post('/auth/login', credentials);
+  checkEmail: async (email) => {
+    const response = await axiosInstance.post('/auth/check-email', { email });
     return response.data;
   },
 
@@ -12,13 +12,18 @@ const authService = {
     return response.data;
   },
 
-  getProfile: async () => {
-    const response = await axiosInstance.get('/auth/profile');
+  verifyOtp: async (otpData) => {
+    const response = await axiosInstance.post('/auth/verify-otp', otpData);
     return response.data;
   },
 
-  updateProfile: async (profileData) => {
-    const response = await axiosInstance.put('/auth/profile', profileData);
+  resendOtp: async (email) => {
+    const response = await axiosInstance.post('/auth/resend-otp', { email });
+    return response.data;
+  },
+
+  login: async (credentials) => {
+    const response = await axiosInstance.post('/auth/login', credentials);
     return response.data;
   },
 
@@ -27,8 +32,18 @@ const authService = {
     return response.data;
   },
 
-  resetPassword: async (resetData) => {
-    const response = await axiosInstance.post('/auth/reset-password', resetData);
+  resetPassword: async (resetToken, password) => {
+    const response = await axiosInstance.put(`/auth/reset-password/${resetToken}`, { password });
+    return response.data;
+  },
+
+  changePassword: async (passwordData) => {
+    const response = await axiosInstance.put('/auth/change-password', passwordData);
+    return response.data;
+  },
+
+  getProfile: async () => {
+    const response = await axiosInstance.get('/auth/me');
     return response.data;
   },
 };

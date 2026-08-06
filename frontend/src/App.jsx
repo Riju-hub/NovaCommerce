@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 
@@ -9,6 +10,8 @@ import Footer from './components/common/Footer';
 import LoginPage from './pages/auth/LoginPage';
 import RegisterPage from './pages/auth/RegisterPage';
 import ProfilePage from './pages/auth/ProfilePage';
+import ForgotPasswordPage from './pages/auth/ForgotPasswordPage'; // 👈 Added import
+import ResetPasswordPage from './pages/auth/ResetPasswordPage';   // 👈 Added import
 
 // Customer Pages
 import HomePage from './pages/customer/HomePage';
@@ -18,7 +21,7 @@ import StoreFrontPage from './pages/customer/StoreFrontPage';
 import CartPage from './pages/customer/CartPage';
 import CheckoutPage from './pages/customer/CheckoutPage';
 import OrderConfirmationPage from './pages/customer/OrderConfirmationPage';
-import OrderHistoryPage from './pages/customer/OrderHistoryPage'; // 👈 Import added
+import OrderHistoryPage from './pages/customer/OrderHistoryPage';
 
 // Vendor Pages
 import VendorDashboard from './pages/vendor/VendorDashboard';
@@ -55,11 +58,13 @@ const App = () => {
             {/* Auth Routes */}
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
+            <Route path="/forgot-password" element={<ForgotPasswordPage />} /> {/* 👈 Registered route */}
+            <Route path="/reset-password/:token" element={<ResetPasswordPage />} /> {/* 👈 Registered route */}
 
             {/* Protected Customer Routes */}
             <Route element={<PrivateRoute allowedRoles={['customer', 'vendor', 'admin']} />}>
               <Route path="/profile" element={<ProfilePage />} />
-              <Route path="/orders" element={<OrderHistoryPage />} /> {/* 👈 Route registered */}
+              <Route path="/orders" element={<OrderHistoryPage />} />
               <Route path="/checkout" element={<CheckoutPage />} />
               <Route path="/order-confirmation" element={<OrderConfirmationPage />} />
             </Route>
