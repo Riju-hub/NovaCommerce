@@ -1,300 +1,144 @@
-# 🛒 Multi-Tenant E-Commerce Platform
+# 🛒 NovaEcommerce — Multi-Tenant E-Commerce Platform (SaaS)
 
-A full-stack **Multi-Tenant E-Commerce Platform** built with the **MERN Stack**, allowing multiple vendors to manage their own stores while customers can browse, purchase products, and track orders from a unified marketplace.
+> A scalable, cloud-native Multi-Tenant E-Commerce SaaS platform enabling independent merchants to launch digital storefronts while empowering administrators with centralized oversight.
 
----
-
-## 🚀 Features
-
-### 👤 Authentication
-- User Registration & Login
-- JWT Authentication
-- Role-Based Authorization
-- Forgot & Reset Password
-- User Profile Management
-
-### 🛍️ Customer
-- Browse Products
-- Product Search & Filtering
-- Shopping Cart
-- Secure Checkout
-- Order Tracking
-- Product Reviews
-
-### 🏪 Vendor
-- Store Management
-- Product CRUD Operations
-- Product Variants
-- Image Upload
-- Sales Dashboard
-- Order Management
-
-### 🛠️ Admin
-- Dashboard & Analytics
-- User Management
-- Vendor Approval
-- Product Monitoring
-- Order Management
-- Sales Reports
-
-### 💳 Payment
-- Stripe Payment Gateway
-- Secure Checkout
-- Transaction Management
-
-### 📧 Notifications
-- Email Verification
-- Password Reset Emails
-- Order Confirmation Emails
+[![Frontend Deployment](https://img.shields.io/badge/Frontend-Vercel-black?style=flat&logo=vercel)](https://nova-commerce-th.vercel.app)
+[![Backend Deployment](https://img.shields.io/badge/Backend-Render-46E3B7?style=flat&logo=render)](https://novacommerce-qreu.onrender.com)
+[![Database](https://img.shields.io/badge/Database-MongoDB%20Atlas-47A248?style=flat&logo=mongodb)](https://www.mongodb.com/cloud/atlas)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ---
 
-# 🏗️ Tech Stack
+## 📑 Table of Contents
 
-## Frontend
-- React.js
-- Redux Toolkit
-- React Router DOM
-- Axios
-- Tailwind CSS
-- Vite
-
-## Backend
-- Node.js
-- Express.js
-- MongoDB
-- Mongoose
-- JWT Authentication
-- Nodemailer
-- Cloudinary
-- Stripe
-
----
-
-# 📁 Project Structure
-
-```
-ecommerce-platform/
-│
-├── frontend/
-│   ├── public/
-│   ├── src/
-│   │   ├── assets/
-│   │   ├── components/
-│   │   │   ├── common/
-│   │   │   ├── auth/
-│   │   │   ├── customer/
-│   │   │   ├── vendor/
-│   │   │   └── admin/
-│   │   │
-│   │   ├── pages/
-│   │   │   ├── auth/
-│   │   │   ├── customer/
-│   │   │   ├── vendor/
-│   │   │   └── admin/
-│   │   │
-│   │   ├── redux/
-│   │   ├── routes/
-│   │   ├── services/
-│   │   ├── hooks/
-│   │   ├── utils/
-│   │   ├── App.jsx
-│   │   └── main.jsx
-│   │
-│   ├── .env
-│   ├── vite.config.js
-│   └── package.json
-│
-├── backend/
-│   ├── config/
-│   ├── controllers/
-│   ├── middlewares/
-│   ├── models/
-│   ├── routes/
-│   ├── validators/
-│   ├── utils/
-│   ├── seeds/
-│   ├── tests/
-│   ├── .env
-│   ├── server.js
-│   └── package.json
-│
-└── .gitignore
-```
+- [Overview](#-overview)
+- [Key Features](#-key-features)
+- [Technology Stack](#-technology-stack)
+- [System & Deployment Architecture](#-system--deployment-architecture)
+- [Project Directory Structure](#-project-directory-structure)
+- [User Roles & Permissions](#-user-roles--permissions)
+- [Security Architecture](#-security-architecture)
+- [Database Models](#-database-models)
+- [Environment Configuration](#-environment-configuration)
+- [Installation & Local Setup](#-installation--local-setup)
+- [Third-Party Integrations](#-third-party-integrations)
+- [4-Week Development Timeline](#-4-week-development-timeline)
+- [Production Deployment](#-production-deployment)
+- [QA & Testing Checklist](#-qa--testing-checklist)
+- [Future Enhancements](#-future-enhancements)
+- [Engineering Team & Organization](#-engineering-team--organization)
 
 ---
 
-# 📂 Folder Overview
+## 🌐 Overview
 
-## Frontend
+**NexCart** is a full-stack multi-tenant SaaS e-commerce solution designed for modern digital commerce. Developed by **Zaalima Development Pvt Ltd**, the platform provides decentralized digital storefront capabilities for independent retail vendors while consolidating governance, data compliance, and platform metrics under a unified Super Admin control plane.
 
-| Folder | Description |
-|---------|-------------|
-| assets | Images, icons and static resources |
-| components | Reusable UI components |
-| pages | Application pages |
-| redux | Redux Toolkit store & slices |
-| routes | Route protection and routing |
-| services | API service layer |
-| hooks | Custom React hooks |
-| utils | Helper functions & constants |
+### 🎯 Core Objectives
+- Enable small-to-medium enterprises (SMEs) to launch standalone digital storefronts with zero infrastructure overhead.
+- Provide strict tenant data isolation, granular Role-Based Access Control (RBAC), and automated payment and fulfillment workflows.
+- Deliver sub-millisecond route transitions and real-time sales reporting via interactive analytical dashboards.
 
 ---
 
-## Backend
+## ✨ Key Features
 
-| Folder | Description |
-|---------|-------------|
-| config | Database & third-party configurations |
-| controllers | Business logic |
-| middlewares | Authentication & error handling |
-| models | MongoDB Models |
-| routes | REST API Routes |
-| validators | Request validation |
-| utils | Helper utilities |
-| seeds | Sample database data |
-| tests | Unit & integration tests |
-
----
-
-# ⚙️ Installation
-
-## Clone Repository
-
-```bash
-git clone https://github.com/your-username/multi-tenant-ecommerce-platform.git
-
-cd multi-tenant-ecommerce-platform
-```
+- **🏪 Multi-Vendor Storefronts:** Merchants can independently register, customize storefront branding, and manage catalog data.
+- **👥 Role-Based Access Control (RBAC):** Distinct permission boundaries for **Customer**, **Vendor**, and **Super Admin** personas.
+- **🔐 Secure Authentication:** Stateless JSON Web Token (JWT) sessions and cryptographic password hashing.
+- **📦 Inventory & Variant Management:** Complete CRUD workflows for products, pricing tiers, variant attributes, stock-level triggers, and media assets.
+- **🛒 Global Shopping Cart & Checkout:** Powered by Redux Toolkit for immutable state, local persistence, and unified checkout.
+- **💳 Stripe Payment Processing:** End-to-end checkout sessions with webhook verification for automated order status transitions.
+- **☁️ Cloudinary Media Pipeline:** Automated image optimization, transformation, and CDN distribution.
+- **📧 Transactional Email Engine:** Automated verification, password reset, and HTML receipt delivery via Nodemailer.
+- **📊 Interactive Analytics:** Super Admin and Vendor dashboard metric visualization powered by Recharts.
+- **🏢 Tenant-Aware Data Scoping:** Custom middleware dynamically scopes data queries by store boundaries to guarantee tenant isolation.
 
 ---
 
-## Install Frontend
+## 🧰 Technology Stack
 
-```bash
-cd frontend
+### Frontend
+| Technology | Version / Purpose |
+| :--- | :--- |
+| **React.js** | Single Page Application (SPA) User Interface |
+| **Vite** | Next-generation frontend tooling and production bundler |
+| **Redux Toolkit** | Centralized, immutable global state management (Auth, Cart, Orders, Admin) |
+| **Tailwind CSS** | Utility-first responsive design system |
+| **React Router DOM** | Declarative client-side routing with route guards |
+| **Axios** | Promised-based HTTP client with request/response interceptors |
+| **Recharts / Chart.js** | Data visualization for order volume and gross revenue metrics |
+| **Lucide Icons** | Clean, modern UI iconography |
 
-npm install
-```
+### Backend
+| Technology | Version / Purpose |
+| :--- | :--- |
+| **Node.js** | Event-driven, asynchronous JavaScript runtime environment |
+| **Express.js** | Modular RESTful API routing and middleware framework |
+| **Mongoose** | Schema-based object data modeling (ODM) for MongoDB |
+| **JSON Web Tokens (JWT)** | Stateless cross-origin API authorization |
+| **Bcrypt.js** | Cryptographic salt generation and password hashing |
+| **Multer** | Multipart/form-data middleware for file uploads |
+| **Helmet.js** | HTTP security response header hardening |
+| **Express Rate Limit** | IP-level brute-force and DDoS mitigation |
 
----
-
-## Install Backend
-
-```bash
-cd backend
-
-npm install
-```
-
----
-
-# 🔐 Environment Variables
-
-## Backend (.env)
-
-```env
-PORT=5000
-
-MONGO_URI=your_mongodb_connection
-
-JWT_SECRET=your_secret
-
-CLIENT_URL=http://localhost:5173
-
-CLOUDINARY_CLOUD_NAME=
-
-CLOUDINARY_API_KEY=
-
-CLOUDINARY_API_SECRET=
-
-STRIPE_SECRET_KEY=
-
-EMAIL_USER=
-
-EMAIL_PASS=
-```
+### Database & External Services
+| Layer | Service / Provider | Functionality |
+| :--- | :--- | :--- |
+| **Database** | MongoDB Atlas | Scalable document-oriented cloud database cluster |
+| **Payments** | Stripe API | Secure payment gateway & raw-body webhook listener |
+| **Media Storage** | Cloudinary | High-availability cloud media CDN |
+| **Transactional Email** | Nodemailer (Gmail SMTP) | Email delivery engine for receipts and notifications |
 
 ---
 
-## Frontend (.env)
+## 🏗️ System & Deployment Architecture
 
-```env
-VITE_API_URL=http://localhost:5000/api
-```
-
----
-
-# ▶️ Run the Project
-
-## Backend
-
-```bash
-cd backend
-
-npm run dev
-```
-
----
-
-## Frontend
-
-```bash
-cd frontend
-
-npm run dev
-```
-
----
-
-# 📦 API Modules
-
-- Authentication
-- Users
-- Vendors
-- Categories
-- Products
-- Cart
-- Orders
-- Payments
-- Analytics
-- Admin
-
----
-
-# 🔒 Security Features
-
-- JWT Authentication
-- Password Hashing (bcrypt)
-- Role-Based Access Control
-- Rate Limiting
-- Protected Routes
-- Input Validation
-- Error Handling
-
----
-
-# 📈 Future Improvements
-
-- Wishlist
-- Coupons & Discounts
-- Multi-language Support
-- AI Product Recommendation
-- Real-Time Notifications
-- Live Chat
-- Inventory Forecasting
-- Mobile Application
-
----
-
-# 📄 License
-
-This project is licensed under the **MIT License**.
-
----
-
-# ⭐ Support
-
-If you found this project helpful, consider giving it a ⭐ on GitHub.
-
-Happy Coding! 🚀
+### High-Level System Architecture
+```text
+                         ┌─────────────────────────┐
+                         │       USERS / CLIENTS   │
+                         │                         │
+                         │ Customer | Vendor |     │
+                         │ Super Admin             │
+                         └────────────┬────────────┘
+                                      │
+                                      ▼
+                         ┌─────────────────────────┐
+                         │    REACT FRONTEND       │
+                         │                         │
+                         │ Vite                    │
+                         │ Redux Toolkit           │
+                         │ React Router            │
+                         │ Tailwind CSS            │
+                         │ Axios                   │
+                         └────────────┬────────────┘
+                                      │
+                                      │ HTTPS / REST API
+                                      ▼
+                         ┌─────────────────────────┐
+                         │     NODE + EXPRESS      │
+                         │                         │
+                         │ Authentication (JWT)    │
+                         │ RBAC Middleware         │
+                         │ Tenant Middleware       │
+                         │ Central Error Handler   │
+                         │ Rate Limiter / Security │
+                         └────────────┬────────────┘
+                                      │
+                     ┌────────────────┼─────────────────┐
+                     │                │                 │
+                     ▼                ▼                 ▼
+              ┌─────────────┐ ┌─────────────┐ ┌─────────────┐
+              │ MongoDB     │ │ Cloudinary  │ │   Stripe    │
+              │ Atlas       │ │             │ │             │
+              │             │ │ Images      │ │ Payments    │
+              │ App Data    │ │ Media CDN   │ │ Webhooks    │
+              └─────────────┘ └─────────────┘ └─────────────┘
+                                      │
+                                      ▼
+                              ┌─────────────┐
+                              │ Nodemailer  │
+                              │             │
+                              │ SMTP Emails │
+                              └─────────────┘
